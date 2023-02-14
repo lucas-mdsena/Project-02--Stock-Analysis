@@ -1,5 +1,3 @@
-# os comentários entre chaves {} são ideias a serem exploradas
-
 # 1) Análise exploratória dos dados (Exploratory Data Analysis - EDA)
 
 
@@ -57,7 +55,7 @@ str(base_geral)
 # se alterar o tipo de nenhuma variável
 
 view(base_geral %>% count(TICKER))
-# A contagem de todas as observações da variável TICKER é iguala a 1. Significa que não
+# A contagem de todas as observações da variável TICKER é igual a 1. Significa que não
 # há linhas com ações repetidas.
 
 
@@ -99,7 +97,7 @@ base_ibov <- base_ibov %>% rename("M.BRUTA" = "MARGEM.BRUTA",
 
 
 
-## Visualização de Dados (Data Visualization)
+## Visualização de Dados
 
 # DY - Dividend Yield 
 hist(base_geral$DY)
@@ -326,8 +324,6 @@ base_ibov_sem_outlier_pl %>%
 # para representar o índice é mais razoável, uma vez que o outlier removido pode ser um caso 
 # atípico com o papel LWSA3.
 
-# {visualizar ação mais "cara" e mais "barata"}
-# {comparar P/L com o LPA - lucro por ação e ver como os dois se relacionam ou não}
   
 
 # P/VP
@@ -639,7 +635,6 @@ base_ibov_data_clean[80:90,1:11] %>%
   kable_classic(html_font = "courier new") %>% 
   kable_styling(bootstrap_options = "striped",
                 font_size = 14)
-# {o que fazer com os outros missing values?}
 
 # Devido aos outliers, os missing values poderiam ser substituídos pela mediana das variáveis, pois
 # a média estão muito deslocadas em alguns casos, como na variável P/L.
@@ -721,68 +716,6 @@ dendograma_cluster_ibov %>%
                            sub = "",
                            ylab = "Clusters",
                            xlab = "")
-
-
-
-
-# Entre as linhas 728 e 783 contém um trecho que deverá ser excluído do trabalho
-########################################################################################################################
-# Podemos comparar os dendogramas de diferentes métodos de agrupamentos
-
-# Criando objetos para armazenar os clusters da comparação
-hc_unico <- cluster_base_ibov <- hclust(matriz_dist, method = "single") 
-hc_completo <- cluster_base_ibov <- hclust(matriz_dist, method = "complete")
-hc_medio <- cluster_base_ibov <- hclust(matriz_dist, method = "average")
-
-# Transformando os clusters em objetos do tipo dendogram para usá-los na função tanglegram
-dendo1 <- as.dendrogram(hc_unico)
-dendo2 <- as.dendrogram(hc_completo)
-dendo3 <- as.dendrogram(hc_medio)
-
-# Juntando os dendogramas para calcular o emaranhado/entanglement
-dend_list_un_comp <- dendlist(dendo1, dendo2)
-dend_list_un_med <- dendlist(dendo1, dendo3)
-dend_list_comp_med <- dendlist(dendo2, dendo3)
-
-# Comparando os dendogramas
-# Simples x Completo
-tanglegram(dendo1, 
-           dendo2, 
-           main_right = "Complete",
-           main_left = "Single",
-           which = c(1L, 2L),
-           main = paste("Emaranhado =",
-                        round(entanglement(dend_list_un_comp), 2)))
-
-# Simples x Médio
-tanglegram(dendo1,
-           dendo3, 
-           main_right = "Average",
-           main_left = "Single",
-           main = paste("Emaranhado =",
-                        round(entanglement(dend_list_un_med), 2)))
-
-# Completo x Médio
-tanglegram(dendo2,
-           dendo3,
-           main_right = "Average",
-           main_left = "Complete",
-           main = paste("Emaranhado =",
-                        round(entanglement(dend_list_comp_med), 2)))
-
-# O emaranhado mostra similaridade entre os clusters. Quanto mais próximo de 1, mais "bagunçada" é a jun-
-# ção entre as árvores e mais diferente são os clusters.
-
-# Nota-se que entre os métodos de encadeamento simples e médio ocorreu o menor valor e, portanto, os 
-# agrupamentos foram formados de forma mais semelhante. Assim, o método completo diverge mais dos outros
-# dois.
-
-# {explicar por que o single e o average ficaram mais parecidos}
-# {justificar a escolha do método single}
-
-# O trabalho continuará com o método single.
-########################################################################################################################
-
 
 
 ## Escolha da quantidade de clusters
@@ -965,7 +898,6 @@ na.omit(base_cluster_reanalise_padronizada) %>% fviz_nbclust(FUN = kmeans,
 
 
 # Aplicando o clustering não hierárquico
-# {justificar porque eu mudei para não hierárquico}
 
 # 4 clusters
 set.seed(0)
@@ -1028,7 +960,6 @@ base_cluster_reanalise_result_kmeans6 %>%
 
 # O papel HAPV3 formou um cluster sozinho, com 4 e 6 agrupamentos. Vamos comparar as observações com as médias
 # dos outros agrupamentos
-# {usar um for para as médias}
 medias_base_kmeans6 <- base_cluster_reanalise_result_kmeans6 %>% 
   group_by(CLUSTER) %>% 
   summarise(QTD_OBS = n(),
@@ -1078,23 +1009,6 @@ medias_base_kmeans6 %>%
 
 
 ########################################################################################################################
-
-# pendências pós correção
-
-# PLOTS
-# adicionar labels com estatísticas descritivas (desvio padrão, média...) 
-# corrigir sobreposição de labels nos dendrogramas (enviei e-mail para a orientadora)
-
-# CLUSTER
-# remover algumas variáveis e refazer a análise, acho que os agrupamentos não ficaram muito claros.
-
-# {as bases de dados em que foram aplicadas o algortimo possuem 86 obs., porém com o uso do 
-# do na.omit, 9 observações são omitidas da base - verificar quais foram}
-
-########################################################################################################################
-
-
-
 
 ## Refazendo a clusterização com menos variáveis
 
@@ -1276,18 +1190,6 @@ base_cluster_result_reanalise3_k6 %>%
 # Análise do resutaldo da reanálise de clustering não hierárquico
 
 # Análise descritiva das médias
-
-# o for não deu certo
-
-# nomes_variaveis <- names(base_cluster_result_reanalise3_k6)
-# 
-# medias_reanalise3_k6 <- base_cluster_result_reanalise3_k6 %>%
-#   group_by(CLUSTER) %>%
-#   summarise(QTD_OBS = n(),
-#     for (i in 2:10) {
-#       nomes_variaveis[i] = mean(base_cluster_result_reanalise3_k6[,i]) %>% round(2)
-#     }
-#   )
 
 medias_reanalise3_k6 <- base_cluster_result_reanalise3_k6 %>%
   group_by(CLUSTER) %>%
